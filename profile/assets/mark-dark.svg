@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="Crossbearing mark: three bearing lines crossing pairwise around a fix">
+  <!-- Dark scheme: the two ink bearings become paper; sea-blue fix stays. -->
+  <g fill="none" stroke-linecap="butt" stroke-width="10">
+    <line x1="61.5" y1="232" x2="149.5" y2="40" stroke="#f2efe9"/>
+    <line x1="70" y1="38.8" x2="210" y2="203.5" stroke="#f2efe9"/>
+    <line x1="12" y1="160.6" x2="244" y2="127.4" stroke="#0b96d6"/>
+  </g>
+  <circle cx="126" cy="128.8" r="7.5" fill="#0b96d6"/>
+</svg>
