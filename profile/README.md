@@ -62,6 +62,12 @@ read-only role connects it.
 
 - 🌐 **[crossbearing.dev](https://crossbearing.dev)** — the product, and the
   five-minute divergence demo.
+- ⚙️ **[crossbearing/crossbearing](https://github.com/crossbearing/crossbearing)** —
+  the engine (source-available, FSL). `./demo/run.sh` shows the divergence
+  report offline in about five seconds.
+- 🧭 **[crossbearing/scenarios](https://github.com/crossbearing/scenarios)** —
+  named agent misbehaviors, each a complete arc: the evidence, the finding,
+  the fix that closes it, and the proof re-run (MIT).
 - 🔎 **[crossbearing/verify](https://github.com/crossbearing/verify)** — the
   public, zero-dependency Agent Evidence Package verifier (MIT). Start here if
   you've been handed a package and want to check it.
