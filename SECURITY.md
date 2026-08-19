@@ -11,8 +11,16 @@ anything that could undermine the **integrity of the evidence** or the
 ## Reporting a vulnerability
 
 Email **[hello@crossbearing.dev](mailto:hello@crossbearing.dev?subject=Security%20%C2%B7%20crossbearing)**
-with `Security` in the subject. Please **do not** open a public issue, pull
-request, or discussion for a suspected vulnerability.
+with `Security` in the subject. That address is the channel we monitor, and it
+works for every crossbearing repository.
+
+Some GitHub repositories also offer **Security → Report a vulnerability**. Where
+you see that button it reaches the same people and is equally welcome; where you
+don't, email is the route — a missing button is not a closed door.
+
+Either way, please **do not** open a public issue, pull request, or discussion
+for a suspected vulnerability. If you're unsure whether what you've found counts,
+email anyway and we'll tell you.
 
 Helpful to include:
 
