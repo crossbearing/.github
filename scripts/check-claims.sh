@@ -55,7 +55,9 @@ echo "Sibling repository claims"
 check_license() {
   local repo=$1 want=$2
   local got
-  got=$(gh api "repos/$repo/license" -q '.license.spdx_id' 2>/dev/null || echo "ERROR")
+  # gh writes its error payload to stdout, so `|| echo ERROR` would leave the
+  # payload in $got rather than replacing it. Branch on the exit status.
+  if ! got=$(gh api "repos/$repo/license" -q '.license.spdx_id' 2>/dev/null); then got="ERROR"; fi
   if [ "$got" = "$want" ]; then pass "$repo licence is $want"
   else fail "$repo licence" "expected $want, got $got"; fi
 }
@@ -76,7 +78,7 @@ else
   pass "crossbearing/verify has no go.sum"
 fi
 
-gomod=$(gh api repos/crossbearing/verify/contents/go.mod -q '.content' 2>/dev/null | base64 -d 2>/dev/null || echo "")
+if ! gomod=$(gh api repos/crossbearing/verify/contents/go.mod -q '.content' 2>/dev/null | base64 -d 2>/dev/null); then gomod=""; fi
 if [ -z "$gomod" ]; then
   fail "crossbearing/verify go.mod readable" "could not fetch go.mod"
 elif grep -qE '^\s*require' <<< "$gomod"; then
@@ -92,6 +94,41 @@ check_path() {
   else fail "$repo:$path" "not found"; fi
 }
 check_path crossbearing/crossbearing demo/run.sh
+
+# ── The security policy against the actual repository settings ───────────────
+# SECURITY.md states that private vulnerability reporting is enabled on every
+# public crossbearing repository. That is an assertion about a setting, and a
+# setting can be flipped back without anyone touching the policy that describes
+# it — the exact claim-versus-record divergence this organization sells the
+# detection of. Checking our own is the cheapest possible act of consistency.
+#
+# Public repos are enumerated rather than hardcoded, so a new public repository
+# that ships without private reporting fails this gate instead of silently
+# making the published policy wrong.
+echo "Security policy vs. repository settings"
+
+# Branch on exit status, never on emptiness: gh prints its error payload to
+# stdout, so a failed call yields non-empty garbage that would otherwise be
+# looped over as if it were repo names. An unverifiable claim fails here; it
+# does not quietly pass.
+if ! public_repos=$(gh api --paginate 'orgs/crossbearing/repos?type=public' \
+     -q '.[] | select(.archived == false) | .name' 2>/dev/null); then
+  public_repos=""
+fi
+
+if [ -z "$public_repos" ]; then
+  fail "enumerate public crossbearing repos" "could not list them — an unverifiable claim is a failed claim"
+else
+  while IFS= read -r repo; do
+    [ -z "$repo" ] && continue
+    if ! enabled=$(gh api "repos/crossbearing/$repo/private-vulnerability-reporting" -q '.enabled' 2>/dev/null); then enabled="ERROR"; fi
+    if [ "$enabled" = "true" ]; then
+      pass "crossbearing/$repo private reporting enabled"
+    else
+      fail "crossbearing/$repo private reporting" "SECURITY.md says every public repo has it; this one reports '$enabled'"
+    fi
+  done <<< "$public_repos"
+fi
 
 echo
 if [ "$fail_count" -gt 0 ]; then
