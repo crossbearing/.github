@@ -1,0 +1,61 @@
+# crossbearing
+
+> A read-only evidence engine that corroborates what AI agents claim they did
+> against the records the infrastructure already keeps — CloudTrail, GCP and
+> Azure audit logs, Kubernetes audit, GitHub audit — and emits signed,
+> auditor-ready evidence. It runs inside the customer's own cloud account,
+> holds no customer data, and cannot write to the environments it reads.
+
+This file is the machine-readable index of the organization's public surface.
+Every factual claim below is externally checkable — the licences, the
+dependency counts, the paths — and is meant to stay that way.
+
+## Repositories
+
+- [crossbearing/crossbearing](https://github.com/crossbearing/crossbearing):
+  the engine. Go. Source-available under the Functional Source License 1.1
+  (ALv2 future license) — not an OSI-approved licence, so tooling reports it as
+  NOASSERTION rather than a known SPDX id. `./demo/run.sh` produces a full
+  divergence report offline in about five seconds.
+- [crossbearing/verify](https://github.com/crossbearing/verify): the offline
+  Agent Evidence Package verifier. Go, MIT, and **zero dependencies** — the
+  standard library is its entire supply chain, enforced in CI by a check that
+  fails if `go.sum` exists. It re-derives a package's hash chain and signature
+  without importing the engine or contacting crossbearing.
+- [crossbearing/scenarios](https://github.com/crossbearing/scenarios): named
+  agent misbehaviors in real infrastructure, MIT. Each is a complete arc — the
+  evidence, the finding, the fix that closes it, and the proof re-run.
+- [crossbearing/.github](https://github.com/crossbearing/.github): the org
+  profile and the organization-wide community health defaults.
+
+## The evidence format
+
+`aep/1` is the Agent Evidence Package format the engine emits and the verifier
+checks. Findings are hash-chained from a genesis anchored to the report window
+and match policy, signed with a KMS key the customer names, and each finding
+carries a re-fetchable locator and digest. Edit, reorder, or drop one finding
+and every downstream hash changes and the signature stops verifying.
+
+The normative definition lives in the two implementations above rather than in
+this file — read [crossbearing/verify](https://github.com/crossbearing/verify)
+if you need the format, since it is the smaller of the two and depends on
+nothing.
+
+## Policies
+
+- [Security policy](https://github.com/crossbearing/.github/blob/main/SECURITY.md):
+  what's in scope, and how to report privately. Evidence integrity,
+  attribution correctness, and the read-only guarantee are the areas we most
+  want tested.
+- [Support](https://github.com/crossbearing/.github/blob/main/SUPPORT.md):
+  where to take a question, by kind.
+- [Contributing](https://github.com/crossbearing/.github/blob/main/CONTRIBUTING.md):
+  ground rules, including the two product properties — read-only architecture
+  and a lean supply chain — that a change must not break.
+- [Code of conduct](https://github.com/crossbearing/.github/blob/main/CODE_OF_CONDUCT.md):
+  Contributor Covenant 2.1.
+
+## Optional
+
+- [crossbearing.dev](https://crossbearing.dev): the product site and the
+  five-minute divergence demo.
