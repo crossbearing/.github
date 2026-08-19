@@ -38,7 +38,22 @@ Keep them in sync, or delete them and accept that the avatar has no source.
 
 ## Palette
 
-Both schemes use the same three values: paper `#F4F1EA` (light) / `#0d1117`
-(dark, matching GitHub's dark canvas), ink `#182433`, and the sea-blue that
-distinguishes the third bearing line. The mark is three lines crossing pairwise
-around the small triangle they enclose — the cocked hat, where the fix lives.
+Five values across the four files:
+
+| value | role |
+| --- | --- |
+| `#0b96d6` | sea-blue — the one distinguishing bearing. The only value present in all four files. |
+| `#182433` | ink — the two other bearings, on light surfaces. |
+| `#f2efe9` | the same two bearings on dark, where ink becomes paper. |
+| `#F4F1EA` | light avatar background. |
+| `#0d1117` | dark avatar background, matching GitHub's dark canvas. |
+
+The marks carry no background rectangle and render transparent against whatever
+surface hosts them; only the avatars have a filled ground, because an uploaded
+avatar has no page behind it to inherit.
+
+Two files spell `#f2efe9` in lower case and two spell it upper. Cosmetic, and
+noted only so the next person doesn't read it as two different colours.
+
+The mark itself is three lines crossing pairwise around the small triangle they
+enclose — the cocked hat, where the fix lives.

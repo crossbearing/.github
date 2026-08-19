@@ -36,8 +36,14 @@ unverified claim.
 
 ## Workflow
 
-- `main` is protected everywhere. Every change lands through a pull request,
-  including changes by maintainers, and including this repository.
+- Every change lands through a pull request — including changes by maintainers,
+  and including this repository. On the four public repositories that rule is
+  enforced by branch protection on `main`. On the private ones it is convention:
+  GitHub gates branch protection for private repositories behind a paid plan,
+  so the rule is currently held by discipline rather than by the platform.
+  Stating it the other way round would put a bar in this file that the org does
+  not actually meet, which is the failure this document warns about two
+  sections up.
 - Merges are squash-merges that preserve the authored commit message. Write the
   commit message as the permanent record — what changed and *why*; the diff
   already shows what. Keep the PR description short and link issues there.
