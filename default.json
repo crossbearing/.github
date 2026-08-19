@@ -3,13 +3,13 @@
   "description": [
     "Shared Renovate posture for every crossbearing repo. Consume it with a one-line renovate.json: {\"extends\": [\"github>crossbearing/.github\"]}.",
     "It lives in one consumed place rather than as a copy per repo, because a per-repo copy drifts silently: the copies that matter are the ones nobody edits, and there is no signal when two of them stop agreeing.",
-    "SCOPE: the managers configured here are the ones this organization actually has — gomod in crossbearing and verify, github-actions everywhere, npm/pnpm in crossbearing.dev, terraform and terragrunt in infra. Rules for ecosystems that are not here are deliberately absent; a rule matching nothing is indistinguishable from a rule that is silently broken, and there is no way to tell which one you have.",
-    "MATCHER HAZARD, read before writing a packageRule for the security path: there isn't one. isVulnerabilityAlert is not a packageRules matcher, so a rule carrying it is narrowed only by its match* fields — one written as matchUpdateTypes patch/minor/major matches every update in the repo, stamping the security label on all of them. A signal that fires on everything carries nothing, and a labels array on such a rule also replaces the labels set by rules above it. The security posture belongs in the vulnerabilityAlerts block, which is the supported mechanism.",
-    "ORDERING HAZARD, read before adding a repo-local packageRule: a consumer's packageRules are appended AFTER the ones here, and later rules win. A local rule setting automerge:true would land after the patch/minor and major rules below and would win — and unlike those rules it would apply to CVE-driven updates too, since vulnerabilityAlerts cannot re-disable what a packageRule turned on. A local minimumReleaseAge would likewise override the first-party exemption at the end of this array.",
-    "TITLE CONTRACT: 'deps' is the semantic SCOPE, never the semantic TYPE. Renovate's PR title is the first thing a conventional-commit gate reads, and a type outside that gate's allowed list makes every PR this preset opens unmergeable in that repo — with no signal anywhere else, because a repo without such a gate merges the same title happily. Keep the type inside the conventional set (chore); express what is being updated in the scope.",
-    "AGE FLOOR: minimumReleaseAge holds routine updates for three days. A compromised publish is typically caught and unpublished within hours, and nothing here is urgent enough to be worth being the first consumer of. This is supply-chain posture for its own sake: crossbearing.dev is on pnpm 10, which sets no release-age floor of its own, so unlike some estates there is no package-manager floor that Renovate must stay at or above. If that repo moves to pnpm 11 — which defaults minimumReleaseAge to 1440 minutes and re-verifies every lockfile entry on install, not just the ones being added — then Renovate's floor must remain at or above pnpm's, or Renovate will write lockfiles its own CI rejects, and the first-party exemption below will need a matching minimumReleaseAgeExclude on the pnpm side.",
-    "The security path opts out on purpose: vulnerabilityAlerts sets minimumReleaseAge to null so a CVE fix is proposed the moment it exists. Opening it immediately is the point — the PR is the signal a human needs.",
-    "THE READ-ONLY AND ZERO-DEPENDENCY INVARIANTS: verify ships no go.sum, and its CI fails if one appears, because the standard library is its entire supply chain. Renovate has nothing to add there and must never be configured to — its go.mod carries only the go and toolchain directives, which are exactly what should be tracked. Nothing in this preset may introduce a dependency into that repo."
+    "SCOPE: the managers configured here are the ones this organization actually has \u2014 gomod in crossbearing and verify, github-actions everywhere, npm/pnpm in crossbearing.dev, terraform and terragrunt in infra. Rules for ecosystems that are not here are deliberately absent; a rule matching nothing is indistinguishable from a rule that is silently broken, and there is no way to tell which one you have. The same rule governs customManagers: the one below matches the `go run tool@version` shape that crossbearing and verify actually use, verified against their workflow files. A manager for the `*_VERSION` env-var shape is deliberately absent because nothing in this organization uses it \u2014 an untested regex that matches nothing is indistinguishable from one that is silently broken, and a custom manager is the worst place to have that ambiguity, because the only symptom is a dependency quietly going untracked.",
+    "MATCHER HAZARD, read before writing a packageRule for the security path: there isn't one. isVulnerabilityAlert is not a packageRules matcher, so a rule carrying it is narrowed only by its match* fields \u2014 one written as matchUpdateTypes patch/minor/major matches every update in the repo, stamping the security label on all of them. A signal that fires on everything carries nothing, and a labels array on such a rule also replaces the labels set by rules above it. The security posture belongs in the vulnerabilityAlerts block, which is the supported mechanism.",
+    "ORDERING HAZARD, read before adding a repo-local packageRule: a consumer's packageRules are appended AFTER the ones here, and later rules win. A local rule setting automerge:true would land after the patch/minor and major rules below and would win \u2014 and unlike those rules it would apply to CVE-driven updates too, since vulnerabilityAlerts cannot re-disable what a packageRule turned on. A local minimumReleaseAge would likewise override the first-party exemption at the end of this array.",
+    "TITLE CONTRACT: 'deps' is the semantic SCOPE, never the semantic TYPE. Renovate's PR title is the first thing a conventional-commit gate reads, and a type outside that gate's allowed list makes every PR this preset opens unmergeable in that repo \u2014 with no signal anywhere else, because a repo without such a gate merges the same title happily. Keep the type inside the conventional set (chore); express what is being updated in the scope.",
+    "AGE FLOOR: minimumReleaseAge holds routine updates for three days. A compromised publish is typically caught and unpublished within hours, and nothing here is urgent enough to be worth being the first consumer of. This is supply-chain posture for its own sake: crossbearing.dev is on pnpm 10, which sets no release-age floor of its own, so unlike some estates there is no package-manager floor that Renovate must stay at or above. If that repo moves to pnpm 11 \u2014 which defaults minimumReleaseAge to 1440 minutes and re-verifies every lockfile entry on install, not just the ones being added \u2014 then Renovate's floor must remain at or above pnpm's, or Renovate will write lockfiles its own CI rejects, and the first-party exemption below will need a matching minimumReleaseAgeExclude on the pnpm side.",
+    "The security path opts out on purpose: vulnerabilityAlerts sets minimumReleaseAge to null so a CVE fix is proposed the moment it exists. Opening it immediately is the point \u2014 the PR is the signal a human needs.",
+    "THE READ-ONLY AND ZERO-DEPENDENCY INVARIANTS: verify ships no go.sum, and its CI fails if one appears, because the standard library is its entire supply chain. Renovate has nothing to add there and must never be configured to \u2014 its go.mod carries only the go and toolchain directives, which are exactly what should be tracked. Nothing in this preset may introduce a dependency into that repo."
   ],
   "extends": [
     "config:recommended",
@@ -21,31 +21,45 @@
   ],
   "timezone": "America/Los_Angeles",
   "minimumReleaseAge": "3 days",
-  "labels": ["deps"],
+  "labels": [
+    "deps"
+  ],
   "prHourlyLimit": 4,
   "prConcurrentLimit": 8,
   "rebaseWhen": "behind-base-branch",
   "semanticCommitScope": "deps",
   "lockFileMaintenance": {
     "enabled": true,
-    "schedule": ["before 6am on monday"]
+    "schedule": [
+      "before 6am on monday"
+    ]
   },
   "packageRules": [
     {
-      "description": "Patch + minor open a PR and wait for a human. automergeType is 'pr' rather than 'branch' for whenever automerge is switched on: 'branch' commits straight to the base branch without ever opening a PR, which this org does not do — every change lands through a pull request.",
-      "matchUpdateTypes": ["patch", "minor"],
+      "description": "Patch + minor open a PR and wait for a human. automergeType is 'pr' rather than 'branch' for whenever automerge is switched on: 'branch' commits straight to the base branch without ever opening a PR, which this org does not do \u2014 every change lands through a pull request.",
+      "matchUpdateTypes": [
+        "patch",
+        "minor"
+      ],
       "automerge": false,
       "automergeType": "pr"
     },
     {
       "description": "Major upgrades always need review",
-      "matchUpdateTypes": ["major"],
+      "matchUpdateTypes": [
+        "major"
+      ],
       "automerge": false,
-      "labels": ["deps", "major"]
+      "labels": [
+        "deps",
+        "major"
+      ]
     },
     {
-      "description": "Group the AWS SDK with smithy (go). They release together, and the engine's own documentation describes its dependency tree as a single upstream vendor — AWS SDK plus smithy — which is the property a reviewer is checking when one of these PRs arrives. Splitting them produces PRs that cannot build alone.",
-      "matchManagers": ["gomod"],
+      "description": "Group the AWS SDK with smithy (go). They release together, and the engine's own documentation describes its dependency tree as a single upstream vendor \u2014 AWS SDK plus smithy \u2014 which is the property a reviewer is checking when one of these PRs arrives. Splitting them produces PRs that cannot build alone.",
+      "matchManagers": [
+        "gomod"
+      ],
       "groupName": "aws-sdk-go",
       "matchPackageNames": [
         "/^github.com/aws/aws-sdk-go-v2/",
@@ -53,15 +67,25 @@
       ]
     },
     {
-      "description": "The go and toolchain directives are tracked, not pinned-and-forgotten. gomod assigns these two SEPARATE depTypes — 'golang' for the go directive and 'toolchain' for the toolchain directive — so a rule matching only one of them silently leaves the other unmanaged. Both Go repos gate CI on govulncheck, and a toolchain advisory is fixed by moving the toolchain directive specifically, so that is the one that must not be missed: an un-bumped toolchain is a CI failure waiting on a commit nobody is going to make. Labelled so it is not mistaken for a routine dependency bump.",
-      "matchManagers": ["gomod"],
-      "matchDepTypes": ["golang", "toolchain"],
+      "description": "The go and toolchain directives are tracked, not pinned-and-forgotten. gomod assigns these two SEPARATE depTypes \u2014 'golang' for the go directive and 'toolchain' for the toolchain directive \u2014 so a rule matching only one of them silently leaves the other unmanaged. Both Go repos gate CI on govulncheck, and a toolchain advisory is fixed by moving the toolchain directive specifically, so that is the one that must not be missed: an un-bumped toolchain is a CI failure waiting on a commit nobody is going to make. Labelled so it is not mistaken for a routine dependency bump.",
+      "matchManagers": [
+        "gomod"
+      ],
+      "matchDepTypes": [
+        "golang",
+        "toolchain"
+      ],
       "groupName": "go-toolchain",
-      "labels": ["deps", "toolchain"]
+      "labels": [
+        "deps",
+        "toolchain"
+      ]
     },
     {
       "description": "Group React with react-dom and their types. react and react-dom are version-locked to each other, and @types/react* track them; a PR moving one without the others fails typecheck on its own.",
-      "matchManagers": ["npm"],
+      "matchManagers": [
+        "npm"
+      ],
       "groupName": "react",
       "matchPackageNames": [
         "/^react$/",
@@ -71,57 +95,88 @@
       ]
     },
     {
-      "description": "Group Tailwind with its Vite plugin — the plugin tracks the framework major and a split upgrade breaks the build.",
-      "matchManagers": ["npm"],
+      "description": "Group Tailwind with its Vite plugin \u2014 the plugin tracks the framework major and a split upgrade breaks the build.",
+      "matchManagers": [
+        "npm"
+      ],
       "groupName": "tailwind",
-      "matchPackageNames": ["/^tailwindcss$/", "/^@tailwindcss//"]
+      "matchPackageNames": [
+        "/^tailwindcss$/",
+        "/^@tailwindcss//"
+      ]
     },
     {
       "description": "Group vitest core + its packages",
-      "matchManagers": ["npm"],
+      "matchManagers": [
+        "npm"
+      ],
       "groupName": "vitest",
-      "matchPackageNames": ["/^vitest$/", "/^@vitest//"]
+      "matchPackageNames": [
+        "/^vitest$/",
+        "/^@vitest//"
+      ]
     },
     {
-      "description": "GitHub Actions — group minor + patch into one PR",
-      "matchManagers": ["github-actions"],
+      "description": "GitHub Actions \u2014 group minor + patch into one PR",
+      "matchManagers": [
+        "github-actions"
+      ],
       "groupName": "github-actions",
-      "schedule": ["before 6am on monday"]
+      "schedule": [
+        "before 6am on monday"
+      ]
     },
     {
       "description": "Pin GitHub Actions to commit SHAs (supply-chain hardening). A tag is mutable; a SHA is the only reference that means the same thing next week.",
-      "matchManagers": ["github-actions"],
+      "matchManagers": [
+        "github-actions"
+      ],
       "pinDigests": true
     },
     {
       "description": "OpenTofu providers and modules",
-      "matchManagers": ["terraform", "terragrunt"],
+      "matchManagers": [
+        "terraform",
+        "terragrunt"
+      ],
       "groupName": "opentofu",
-      "schedule": ["before 6am on monday"]
+      "schedule": [
+        "before 6am on monday"
+      ]
     },
     {
-      "description": "First-party packages skip the release-age floor. The floor exists so no tree here is the first consumer of a compromised publish. @shuttering is published from a repo under the same ownership as its consumers, to a private registry, deliberately and announced — there is no third party to be compromised by, and the floor only delays a bump by three days. Deliberately NOT extended to any package published to the public registry and consumed outside this organization, which is held to the same bar as any other public dependency.",
-      "matchPackageNames": ["/^@shuttering//"],
+      "description": "First-party packages skip the release-age floor. The floor exists so no tree here is the first consumer of a compromised publish. @shuttering is published from a repo under the same ownership as its consumers, to a private registry, deliberately and announced \u2014 there is no third party to be compromised by, and the floor only delays a bump by three days. Deliberately NOT extended to any package published to the public registry and consumed outside this organization, which is held to the same bar as any other public dependency.",
+      "matchPackageNames": [
+        "/^@shuttering//"
+      ],
       "minimumReleaseAge": null
     }
   ],
   "customManagers": [
     {
       "customType": "regex",
-      "description": "Track tool versions pinned in workflow env vars. A CI job that installs a tool by asking a release API for 'latest' has no pinned version to bump, so its behaviour changes with no commit and a gate can go red on a diff it never read. Pinning fixes that and creates the opposite problem — a version nobody updates — unless something tracks it. Annotate the line and this manager treats it as a dependency: # renovate: datasource=github-releases depName=owner/repo",
-      "managerFilePatterns": ["/^\\.github/workflows/[^/]+\\.ya?ml$/"],
+      "description": "Track tool versions pinned inline in `go run tool@version` steps. A CI job that installs a tool by asking for 'latest' has no pinned version to bump, so its behaviour changes with no commit and a gate can go red on a diff it never read. Pinning fixes that and creates the opposite problem \u2014 a version nobody updates \u2014 unless something tracks it. WORKED EXAMPLE, copy this shape exactly; the annotation goes on the line ABOVE the invocation and the version must be inline after the @, not hoisted into a variable:\n        # renovate: datasource=go depName=golang.org/x/vuln\n        run: go run golang.org/x/vuln/cmd/govulncheck@v1.7.0 ./...\ndepName is the MODULE path, not the package path \u2014 golang.org/x/vuln, not golang.org/x/vuln/cmd/govulncheck \u2014 because the go datasource queries the module proxy. `versioning=` is optional and defaults to semver. The pattern is deliberately RE2-safe (no lookarounds), because Renovate prefers RE2 where it is available and a lookaround would fail there while working in a local test. It was verified against the real workflow lines in crossbearing and verify before shipping: annotated-and-pinned matches and captures the version, an annotated line with no `go run` does not match, and an unannotated `go run` does not match.",
+      "managerFilePatterns": [
+        "/^\\.github/workflows/[^/]+\\.ya?ml$/"
+      ],
       "matchStrings": [
-        "#\\s*renovate:\\s*datasource=(?<datasource>[a-z-]+?)\\s+depName=(?<depName>[^\\s]+?)(?:\\s+versioning=(?<versioning>[^\\s]+?))?\\s+[A-Z0-9_]+_VERSION\\s*:\\s*[\"']?(?<currentValue>[^\"'\\s]+)[\"']?"
+        "#\\s*renovate:\\s*datasource=(?<datasource>\\S+?)\\s+depName=(?<depName>\\S+?)(?:\\s+versioning=(?<versioning>\\S+?))?\\s*\\n[^\\n]*?go\\s+run\\s+\\S+?@(?<currentValue>\\S+)"
       ],
       "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
     }
   ],
   "vulnerabilityAlerts": {
-    "description": "The whole security posture lives here, not in packageRules — see the matcher hazard note above for why a packageRule cannot express 'only vulnerability alerts'. minimumReleaseAge is null on purpose, stated rather than inherited: the top-level three-day floor must not delay a CVE fix, and writing it down keeps a future edit to that floor from silently acquiring a delay on the security path.",
-    "labels": ["security", "deps", "needs-review"],
+    "description": "The whole security posture lives here, not in packageRules \u2014 see the matcher hazard note above for why a packageRule cannot express 'only vulnerability alerts'. minimumReleaseAge is null on purpose, stated rather than inherited: the top-level three-day floor must not delay a CVE fix, and writing it down keeps a future edit to that floor from silently acquiring a delay on the security path.",
+    "labels": [
+      "security",
+      "deps",
+      "needs-review"
+    ],
     "automerge": false,
     "minimumReleaseAge": null,
-    "schedule": ["at any time"]
+    "schedule": [
+      "at any time"
+    ]
   },
   "osvVulnerabilityAlerts": true
 }
