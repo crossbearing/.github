@@ -59,6 +59,30 @@ state of the design — what the system *is* — rather than narrating how it go
 there. Prefer the concrete claim with evidence behind it over the confident
 adjective; that's the whole product thesis, and it applies to our own prose.
 
+## Before adding a community health file to a repository
+
+The files in [`crossbearing/.github`](https://github.com/crossbearing/.github) —
+this one, the security policy, the code of conduct, the support routing, the
+issue and PR templates — are served by GitHub as the default for every
+repository in the organization that does not ship its own copy.
+
+A repository that adds its own copy **replaces** the inherited file entirely.
+GitHub has no mechanism for extending one: there is no `extends`, no merge, no
+composition. The moment a repo ships its own `SECURITY.md`, the org-level policy
+stops applying to it, and the new file has to carry everything the old one did —
+including the parts nobody remembers are in there.
+
+That is how a fork nobody maintains gets created by someone trying to be
+helpful. The org policy is doing real work for the repos that don't shadow it:
+it names the offline verifier, the canonicalization concern, and the
+false-accept severity model, and a repo-level rewrite that omits any of those
+silently narrows the scope of what people are invited to report.
+
+So: prefer a pointer to the org file over a copy of it. Ship a repository-level
+version only when that repository genuinely needs something the org-wide one
+cannot say, and when you do, carry the whole thing across deliberately rather
+than starting fresh.
+
 ## Reporting a bug
 
 Open an issue with what you ran, what you saw, and what you expected instead.
