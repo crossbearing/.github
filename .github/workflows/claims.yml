@@ -30,6 +30,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # The gate runs first against stubs, then for real. A checker that has
+      # itself shipped two defects does not get to be the only unverified thing
+      # in the pipeline.
+      - name: test the checker
+        run: ./scripts/test-check-claims.sh
+
       - name: re-derive every externally checkable claim
         env:
           # gh needs a token for the sibling-repo assertions. Read-only, and
