@@ -10,17 +10,18 @@ anything that could undermine the **integrity of the evidence** or the
 
 ## Reporting a vulnerability
 
-Email **[hello@crossbearing.dev](mailto:hello@crossbearing.dev?subject=Security%20%C2%B7%20crossbearing)**
-with `Security` in the subject. That address is the channel we monitor, and it
-works for every crossbearing repository.
+Use GitHub's private vulnerability reporting: open the **Security** tab of the
+affected repository and choose **Report a vulnerability**. It is enabled on every
+public crossbearing repository. The report stays private between you and the
+maintainers, and it keeps the whole exchange attached to the code it concerns.
 
-Some GitHub repositories also offer **Security → Report a vulnerability**. Where
-you see that button it reaches the same people and is equally welcome; where you
-don't, email is the route — a missing button is not a closed door.
+If you'd rather not go through GitHub, email
+**[hello@crossbearing.dev](mailto:hello@crossbearing.dev?subject=Security%20%C2%B7%20crossbearing)**
+with `Security` in the subject. Same people, same queue.
 
-Either way, please **do not** open a public issue, pull request, or discussion
-for a suspected vulnerability. If you're unsure whether what you've found counts,
-email anyway and we'll tell you.
+Please **do not** open a public issue, pull request, or discussion for a
+suspected vulnerability. If you're unsure whether what you've found counts,
+report it anyway and we'll tell you.
 
 Helpful to include:
 
