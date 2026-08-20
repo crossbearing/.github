@@ -59,6 +59,19 @@ state of the design — what the system *is* — rather than narrating how it go
 there. Prefer the concrete claim with evidence behind it over the confident
 adjective; that's the whole product thesis, and it applies to our own prose.
 
+## The claims check
+
+This repository is prose and links, so its characteristic failure is not a crash
+— it is a sentence that was true when written and quietly stopped being true. A
+licence changes, a repository is renamed, a demo script moves, `verify` picks up
+a dependency and the zero-dependency claim becomes marketing.
+
+`.github/workflows/claims.yml` re-derives the externally checkable ones on every
+pull request and again weekly. When it goes red, the fix is usually to correct
+the claim rather than to restore the world. If the claim is correct and the
+check is wrong, fix the check in the same pull request; do not add an exception
+that makes a false statement pass.
+
 ## Before adding a community health file to a repository
 
 The files in [`crossbearing/.github`](https://github.com/crossbearing/.github) —
