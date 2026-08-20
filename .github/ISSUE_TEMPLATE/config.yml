@@ -1,0 +1,16 @@
+# Blank issues stay enabled: a report that doesn't fit a template is still a
+# report, and a contributor who has to pick a wrong form usually just leaves.
+blank_issues_enabled: true
+contact_links:
+  - name: Report a vulnerability
+    url: mailto:hello@crossbearing.dev?subject=Security%20%C2%B7%20crossbearing
+    about: Evidence integrity, attribution, or the read-only guarantee. Private, and prioritized — never a public issue.
+  - name: Ask a question
+    url: https://github.com/crossbearing/.github/blob/main/SUPPORT.md
+    about: Where to take a question, sorted by what kind of question it is.
+  - name: Check a package yourself
+    url: https://github.com/crossbearing/verify
+    about: The MIT, zero-dependency offline verifier. Re-derive any package's hash chain and signature without contacting us.
+  - name: Become a design partner
+    url: mailto:hello@crossbearing.dev?subject=crossbearing%20%C2%B7%20design%20partner
+    about: For AI-product teams under SOC 2 / ISO 42001 / security-review pressure.
