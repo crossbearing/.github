@@ -1,0 +1,45 @@
+# This repository ships no code, so nothing here can crash. What it can do is
+# become quietly untrue: a licence changes, a repo is renamed, a demo script
+# moves, `verify` picks up a dependency and the zero-dependency claim silently
+# turns into marketing. Every one of those failures is invisible from inside
+# the repo — the files are unchanged, and the world moved.
+#
+# So the gate re-derives the claims instead of trusting them. It runs on every
+# pull request, and again weekly against an unchanged tree, because drift in
+# repositories we don't own arrives without a commit here to trigger it.
+#
+# Mondays 08:00 UTC. The org staggers its scheduled runs by 30 minutes:
+# crossbearing 06:00, verify 07:00, scenarios 07:30.
+name: claims
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "0 8 * * 1"
+  # and on demand, for when something looks wrong and Monday is too far away
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  claims:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # The gate runs first against stubs, then for real. A checker that has
+      # itself shipped two defects does not get to be the only unverified thing
+      # in the pipeline.
+      - name: test the checker
+        run: ./scripts/test-check-claims.sh
+
+      - name: re-derive every externally checkable claim
+        env:
+          # gh needs a token for the sibling-repo assertions. Read-only, and
+          # scoped to public repositories it would reach unauthenticated
+          # anyway — the token is here for the rate limit, not the access.
+          GH_TOKEN: ${{ github.token }}
+        run: ./scripts/check-claims.sh
