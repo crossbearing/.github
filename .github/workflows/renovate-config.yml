@@ -1,0 +1,36 @@
+# The preset in default.json is consumed by every repo in the organization
+# through `extends: ["github>crossbearing/.github"]`. A malformed preset does
+# not degrade gracefully — Renovate errors on the consuming repo rather than
+# falling back to defaults, so a typo here stops dependency updates everywhere
+# at once, and the failure surfaces in repositories whose owners did not
+# change anything.
+#
+# renovate-config-validator exits 1 on an unknown option or a wrong type, which
+# is verified rather than assumed: a config with `notARealRenovateOption` and
+# one with `automerge: "yes-please"` were both rejected before this gate was
+# wired up.
+name: renovate-config
+
+on:
+  push:
+    branches: [main]
+    paths: ["default.json", "renovate.json", ".github/workflows/renovate-config.yml"]
+  pull_request:
+    paths: ["default.json", "renovate.json", ".github/workflows/renovate-config.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: validate the shared preset and this repo's own config
+        run: npx --yes --package renovate -- renovate-config-validator default.json renovate.json
