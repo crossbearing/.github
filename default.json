@@ -150,6 +150,14 @@
         "/^@shuttering//"
       ],
       "minimumReleaseAge": null
+    },
+    {
+      "description": "Pin updates skip the release-age floor. A pin or pinDigest update rewrites a reference to the version already in use as that version's immutable form (a tag to its commit SHA); it introduces no code the repository was not already running, so there is no new publish to age out. Renovate also cannot satisfy the floor for them: pin updates carry no release timestamp, and the default minimumReleaseAgeBehaviour (timestamp-required) holds an update without one indefinitely, leaving its stability-days status pending forever. Digest updates (a new commit behind the same tag) are NOT exempt, because those do bring new code.",
+      "matchUpdateTypes": [
+        "pin",
+        "pinDigest"
+      ],
+      "minimumReleaseAge": null
     }
   ],
   "customManagers": [
