@@ -117,6 +117,16 @@
       ]
     },
     {
+      "description": "Group the @shuttering design-system packages, majors included. Each one pins its @shuttering siblings to an EXACT version (workspace:* rewritten at publish), so a bump to one of them alone installs two copies of whatever it pins, and crossbearing.dev's check-singletons gate fails the PR. Ungrouped, the 4.0.0 release arrived as three PRs (crossbearing.dev #62, #63, #64), each red with SPLIT @shuttering/tokens 3.3.0, 4.0.0. None could ever pass, and the release landed through a fourth PR that moved all three by hand. Majors are grouped too: with separateMajorMinor at its default, every @shuttering major lands together in one renovate/major-shuttering PR, apart from the minor and patch group. motion is deliberately left out: its minors need no @shuttering release, and a @shuttering major that moves the motion range says so in its changelog, which a reviewer has to act on anyway.",
+      "matchManagers": [
+        "npm"
+      ],
+      "groupName": "shuttering",
+      "matchPackageNames": [
+        "/^@shuttering//"
+      ]
+    },
+    {
       "description": "GitHub Actions \u2014 group minor + patch into one PR",
       "matchManagers": [
         "github-actions"
